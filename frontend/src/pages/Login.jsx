@@ -87,8 +87,9 @@ const Login = () => {
         
         <div className="text-xs text-gray-500 text-center">
           <p>Test Accounts:</p>
-          <p>Customer: 10001 / cust@123</p>
-          <p>Agent: 20002 / agent@123</p>
+          <p>Member: 30003/ membo@123</p>
+          <p>Agent: 10001 / agent@123</p>
+          <p>Payer: 20002 / payer@123</p>
         </div>
       </div>
     </div>
