@@ -7,29 +7,33 @@ import hashlib
 import mysql.connector
 from mysql.connector import Error
 from typing import Optional
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = FastAPI()
 
 # CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=os.getenv('CORS_ORIGINS', '*').split(','),
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
 
 # Configuration
-SECRET_KEY = 'healthcare-genai-secret-key-2024-secure-random-hex'
-JWT_ALGORITHM = 'HS256'
-ACCESS_TOKEN_EXPIRES_MIN = 30
+SECRET_KEY = os.getenv('SECRET_KEY')
+JWT_ALGORITHM = os.getenv('JWT_ALGORITHM')
+ACCESS_TOKEN_EXPIRES_MIN = int(os.getenv('ACCESS_TOKEN_EXPIRES_MIN'))
 
 # Database configuration
 DB_CONFIG = {
-    'host': 'localhost',
-    'database': 'auth_app',
-    'user': 'root',
-    'password': 'root'
+    'host': os.getenv('DB_HOST'),
+    'database': os.getenv('DB_NAME'),
+    'user': os.getenv('DB_USER'),
+    'password': os.getenv('DB_PASSWORD')
 }
 
 # Pydantic models
