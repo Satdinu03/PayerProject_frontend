@@ -1,70 +1,44 @@
-import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
-import Header from '../../components/Header';
-import ChatWidget from '../../components/ChatWidget';
-import BenefitChatPanel from '../../components/BenefitChatPanel';
+import { useNavigate } from 'react-router-dom';
 
 const BenefitInquiry = () => {
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const location = useLocation();
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (location.state?.openChat) {
-      setIsChatOpen(true);
-      navigate(location.pathname, { replace: true, state: {} });
-    }
-  }, [location, navigate]);
-
-  const handleGetQuote = () => {
-    alert('Get Quote functionality coming soon!');
-  };
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
-      <Header />
-      
-      {/* Hero Section */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-2 gap-8 py-12">
-          {/* Left Column - Text */}
-          <div className="flex flex-col justify-center bg-white rounded-xl shadow-lg p-8">
-            <h1 className="text-4xl md:text-5xl font-bold text-blue-900 mb-4">
-              Find Your{' '}
-              <span className="text-blue-600">Perfect Policy</span>
-            </h1>
-            <p className="text-xl text-blue-700 mb-8">
-              Compare, choose & save on insurances
-            </p>
-            <div>
+    <div className="min-h-screen bg-gray-50">
+      <nav className="bg-white shadow">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between h-16">
+            <div className="flex items-center">
               <button
-                onClick={handleGetQuote}
-                className="px-6 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-medium shadow-lg"
+                onClick={() => navigate('/landing')}
+                className="text-indigo-600 hover:text-indigo-900 mr-4"
               >
-                Get Quote
+                ← Back to Dashboard
               </button>
+              <h1 className="text-xl font-semibold">Benefit Inquiry</h1>
             </div>
           </div>
+        </div>
+      </nav>
 
-          {/* Right Column - Illustration */}
-          <div className="flex items-center justify-center">
-            <img
-              src="/src/assets/images/healthcare-hero.png"
-              alt="Healthcare and insurance illustration"
-              className="w-full h-auto max-w-lg"
-            />
+      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div className="px-4 py-6 sm:px-0">
+          <div className="bg-white shadow rounded-lg p-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              Check Your Benefits
+            </h2>
+            <p className="text-gray-600 mb-6">
+              This is a placeholder page for the Benefit Inquiry functionality.
+              Here members would be able to check their benefits and coverage details.
+            </p>
+            <div className="bg-green-50 border border-green-200 rounded-md p-4">
+              <p className="text-green-800">
+                📋 Benefit details and coverage information would be displayed here.
+              </p>
+            </div>
           </div>
         </div>
       </main>
-
-      {/* Floating Chat Widget */}
-      <ChatWidget onOpenChat={() => setIsChatOpen(true)} />
-
-      {/* Chat Panel */}
-      <BenefitChatPanel 
-        isOpen={isChatOpen} 
-        onClose={() => setIsChatOpen(false)} 
-      />
     </div>
   );
 };

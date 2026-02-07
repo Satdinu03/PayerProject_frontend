@@ -1,66 +1,44 @@
-import { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import Header from '../../components/Header';
-import ChatWidget from '../../components/ChatWidget';
 import ChatPanel from '../../components/ChatPanel';
 
 const PlanShopper = () => {
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    if (location.state?.openChat) {
-      setIsChatOpen(true);
-      navigate(location.pathname, { replace: true, state: {} });
-    }
-  }, [location, navigate]);
-
-  const handleGetQuote = () => {
-    alert('Get Quote functionality coming soon!');
-  };
+  const [isChatOpen, setIsChatOpen] = useState(true); // Open by default
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
+    <div className="min-h-screen bg-gray-50">
       <Header />
       
-      {/* Hero Section */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid md:grid-cols-2 gap-8 py-12">
-          {/* Left Column - Text */}
-          <div className="flex flex-col justify-center bg-white rounded-xl shadow-lg p-8">
-            <h1 className="text-4xl md:text-5xl font-bold text-blue-900 mb-4">
-              Find Your{' '}
-              <span className="text-blue-600">Perfect Policy</span>
-            </h1>
-            <p className="text-xl text-blue-700 mb-8">
-              Compare, choose & save on insurances
-            </p>
-            <div>
-              <button
-                onClick={handleGetQuote}
-                className="px-6 py-3 rounded-lg bg-blue-600 text-white hover:bg-blue-700 font-medium shadow-lg"
-              >
-                Get Quote
-              </button>
-            </div>
-          </div>
+      {/* Banner */}
+      <div className="bg-sky-50 border-b border-sky-100">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+          <h1 className="text-2xl font-bold text-gray-900 mb-2">Plan Shopper</h1>
+          <p className="text-gray-600">
+            Ask questions and compare plans. Try: 'Compare SureCare vs DineshHealth'.
+          </p>
+        </div>
+      </div>
 
-          {/* Right Column - Illustration */}
-          <div className="flex items-center justify-center">
-            <img
-              src="/src/assets/images/healthcare-hero.png"
-              alt="Healthcare and insurance illustration"
-              className="w-full h-auto max-w-lg"
-            />
+      <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+        <div className="px-4 py-6 sm:px-0">
+          <div className="bg-white shadow rounded-lg p-6">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4">
+              Browse Health Plans
+            </h2>
+            <p className="text-gray-600 mb-6">
+              Use the chat assistant to compare plans, check copays, and explore coverage options.
+              The chat panel opens automatically to help you get started.
+            </p>
+            <div className="bg-blue-50 border border-blue-200 rounded-md p-4">
+              <p className="text-blue-800">
+                💬 Chat with our Plan Shopper Assistant to compare SureCare vs DineshHealth plans.
+              </p>
+            </div>
           </div>
         </div>
       </main>
 
-      {/* Floating Chat Widget */}
-      <ChatWidget onOpenChat={() => setIsChatOpen(true)} />
-
-      {/* Chat Panel */}
+      {/* Chat Panel - Opens by default */}
       <ChatPanel 
         isOpen={isChatOpen} 
         onClose={() => setIsChatOpen(false)} 

@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import Footer from '../components/Footer';
 
 const Landing = () => {
   const navigate = useNavigate();
@@ -87,6 +88,9 @@ const Landing = () => {
             </div>
           </div>
         </main>
+
+        {/* Footer */}
+        <Footer layout="links" />
       </div>
     );
   }

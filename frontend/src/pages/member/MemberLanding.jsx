@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import Header from '../../components/Header';
 import ChatWidget from '../../components/ChatWidget';
-import BenefitChatPanel from '../../components/BenefitChatPanel';
+import BenefitInquiryPanel from '../../components/BenefitInquiryPanel';
+import Footer from '../../components/Footer';
 
 const MemberLanding = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
@@ -12,7 +13,7 @@ const MemberLanding = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
-      <Header />
+      <Header onOpenBenefitChat={() => setIsChatOpen(true)} />
       
       {/* Hero Section */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -50,11 +51,14 @@ const MemberLanding = () => {
       {/* Floating Chat Widget */}
       <ChatWidget onOpenChat={() => setIsChatOpen(true)} />
 
-      {/* Chat Panel */}
-      <BenefitChatPanel 
+      {/* Benefit Inquiry Panel */}
+      <BenefitInquiryPanel 
         isOpen={isChatOpen} 
         onClose={() => setIsChatOpen(false)} 
       />
+
+      {/* Footer */}
+      <Footer layout="grid" />
     </div>
   );
 };

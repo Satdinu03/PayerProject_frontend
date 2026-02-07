@@ -2,9 +2,12 @@ import { useState } from 'react';
 import Header from '../../components/Header';
 import ChatWidget from '../../components/ChatWidget';
 import ChatPanel from '../../components/ChatPanel';
+import BenefitInquiryPanel from '../../components/BenefitInquiryPanel';
+import Footer from '../../components/Footer';
 
 const AgentLanding = () => {
   const [isChatOpen, setIsChatOpen] = useState(false);
+  const [isBenefitChatOpen, setIsBenefitChatOpen] = useState(false);
 
   const handleGetQuote = () => {
     alert('Get Quote functionality coming soon!');
@@ -12,7 +15,10 @@ const AgentLanding = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white">
-      <Header />
+      <Header 
+        onOpenPlanShopper={() => setIsChatOpen(true)}
+        onOpenAgentBenefitChat={() => setIsBenefitChatOpen(true)}
+      />
       
       {/* Hero Section */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -55,6 +61,15 @@ const AgentLanding = () => {
         isOpen={isChatOpen} 
         onClose={() => setIsChatOpen(false)} 
       />
+      
+      {/* Benefit Inquiry Panel */}
+      <BenefitInquiryPanel 
+        isOpen={isBenefitChatOpen} 
+        onClose={() => setIsBenefitChatOpen(false)} 
+      />
+
+      {/* Footer */}
+      <Footer layout="grid" />
     </div>
   );
 };

@@ -1,65 +1,62 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useRef } from 'react';
+import MessageBubble from '../planshopper_ui/MessageBubble';
+import { chatApi } from '../planshopper_ui/chatApi';
 
 const ChatPanel = ({ isOpen, onClose }) => {
   const [messages, setMessages] = useState([
-    { id: 1, type: 'assistant', text: 'Hello! How may I assist you?' }
+    { id: 1, type: 'assistant', text: "Hello! I'm your Plan Shopper assistant. I can help you find and compare health insurance plans, check drug coverage, find providers, and more. What would you like to know?", hasTable: false, tableData: null }
   ]);
   const [inputValue, setInputValue] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
 
   const faqChips = [
-    "Compare SureCare vs DineshHealth",
-    "Show emergency room copay", 
-    "What are typical coinsurance rates?",
-    "Drug coverage for diabetes"
+    "Compare available plans",
+    "Show drug coverage", 
+    "Find providers in my area",
+    "What are the costs?"
   ];
 
-  const getChatbotResponse = (userMessage) => {
-    const message = userMessage.toLowerCase();
-    
-    if (message.includes('compare') && message.includes('surecare') && message.includes('dineshhealth')) {
-      return `Comparison (demo data):
-- SureCare: Premium ₹1,200/month, ER copay ₹250/visit, Coinsurance 20%
-- DineshHealth: Premium ₹1,050/month, ER copay ₹300/visit, Coinsurance 15%
-Overall: DineshHealth is cheaper but higher ER copay; SureCare has lower ER copay.`;
-    }
-    
-    if (message.includes('emergency room copay') || message.includes('er copay')) {
-      return `Emergency Room copay (demo):
-- SureCare: ₹250/visit + 20% coinsurance (copay waived if admitted)
-- DineshHealth: ₹300/visit + 15% coinsurance`;
-    }
-    
-    if (message.includes('drug') || message.includes('formulary') || message.includes('diabetes')) {
-      return `Drug coverage snapshot (demo):
-- Metformin: Tier 1, ₹0 copay
-- Atorvastatin: Tier 2, ₹150 copay
-- Insulin glargine: Tier 3, ₹400 copay`;
-    }
-    
-    return "I can help you compare plans, premiums, and benefits. Try: 'Compare SureCare vs DineshHealth' or 'Show emergency room copay'.";
-  };
+  const handleSend = async (text = inputValue) => {
+    if (!text.trim() || isLoading) return;
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const handleSend = (text = inputValue) => {
-    if (!text.trim()) return;
-
-    const userMessage = { id: Date.now(), type: 'user', text: text.trim() };
-    const assistantResponse = { 
-      id: Date.now() + 1, 
-      type: 'assistant', 
-      text: getChatbotResponse(text.trim()) 
-    };
-
-    setMessages(prev => [...prev, userMessage, assistantResponse]);
+    const userMessage = { id: Date.now(), type: 'user', text: text.trim(), hasTable: false, tableData: null };
+    setMessages(prev => [...prev, userMessage]);
     setInputValue('');
+    setIsLoading(true);
+
+    // Add placeholder for streaming response
+    const assistantId = Date.now() + 1;
+    const assistantMessage = {
+      id: assistantId,
+      type: 'assistant',
+      text: '',
+      hasTable: false,
+      tableData: null
+    };
+    setMessages(prev => [...prev, assistantMessage]);
+
+    try {
+      await chatApi.sendMessageStream(text.trim(), 'default-session', (chunk) => {
+        setMessages(prev => 
+          prev.map(msg => 
+            msg.id === assistantId 
+              ? { ...msg, text: msg.text + chunk }
+              : msg
+          )
+        );
+      });
+    } catch (error) {
+      setMessages(prev => 
+        prev.map(msg => 
+          msg.id === assistantId 
+            ? { ...msg, text: `Sorry, I encountered an error: ${error.message}. Please try again.` }
+            : msg
+        )
+      );
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const handleKeyPress = (e) => {
@@ -76,13 +73,12 @@ Overall: DineshHealth is cheaper but higher ER copay; SureCare has lower ER copa
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/20 backdrop-blur-sm flex items-end md:items-center justify-center p-4 z-50">
+    <div className="fixed inset-0 flex items-end md:items-center justify-center p-4 z-50" style={{ backgroundColor: 'rgba(0, 0, 0, 0.3)' }}>
       <div className="w-full max-w-xl bg-white rounded-xl shadow-2xl border">
         {/* Header */}
         <div className="flex justify-between items-center p-4 border-b">
           <div>
             <h3 className="text-lg font-semibold text-gray-900">Plan Shopper Assistant</h3>
-            <p className="text-sm text-gray-600">Demo chat • Static answers</p>
           </div>
           <button
             onClick={onClose}
@@ -113,21 +109,21 @@ Overall: DineshHealth is cheaper but higher ER copay; SureCare has lower ER copa
         {/* Messages */}
         <div className="h-72 overflow-y-auto p-4 space-y-4">
           {messages.map((message) => (
-            <div
+            <MessageBubble
               key={message.id}
-              className={`flex ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
-              <div
-                className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                  message.type === 'user'
-                    ? 'bg-sky-600 text-white'
-                    : 'bg-gray-100 text-gray-900'
-                }`}
-              >
-                <p className="text-sm whitespace-pre-line">{message.text}</p>
+              message={message.text}
+              isUser={message.type === 'user'}
+              hasTable={message.hasTable}
+              tableData={message.tableData}
+            />
+          ))}
+          {isLoading && (
+            <div className="flex justify-start">
+              <div className="bg-gray-100 text-gray-600 px-4 py-2 rounded-lg text-sm">
+                Typing...
               </div>
             </div>
-          ))}
+          )}
           <div ref={messagesEndRef} />
         </div>
 
@@ -144,9 +140,10 @@ Overall: DineshHealth is cheaper but higher ER copay; SureCare has lower ER copa
             />
             <button
               onClick={() => handleSend()}
-              className="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500"
+              disabled={isLoading || !inputValue.trim()}
+              className="px-4 py-2 bg-sky-600 text-white rounded-lg hover:bg-sky-700 focus:outline-none focus:ring-2 focus:ring-sky-500 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Send
+              {isLoading ? 'Sending...' : 'Send'}
             </button>
           </div>
         </div>
